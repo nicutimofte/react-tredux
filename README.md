@@ -1,8 +1,10 @@
-# React Redux Todo APP Example
+# React Tredux Todo APP Example
 
 ## Learning Redux
 
-Redux is a predictable state container for JavaScript apps.
+Tredux is a predictable state container for JavaScript apps,based on Redux.
+* [Tredux on GitHub](https://github.com/Stiudeo/tredux)
+
 (If you’re looking for a WordPress framework, check out Redux Framework.)
 
 It helps you write applications that behave consistently, run in different environments (client, server, and native), and are easy to test. On top of that, it provides a great developer experience, such as live code editing combined with a time traveling debugger.
