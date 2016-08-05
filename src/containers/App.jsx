@@ -5,7 +5,7 @@ import MainSection from '../components/MainSection.jsx'
 import * as TodoActions from '../actions/index.jsx'
 
 
-class App extends Component {
+export default class App extends Component {
     render() {
         return (
             <div>

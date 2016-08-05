@@ -1,65 +1,38 @@
 'use strict';
 import React, {Component,PropTypes} from 'react';
-import {connect, actions, getState} from 'tredux';
+const {connect, actions, getState, dispatch} = require('tredux');
+
 import TodoItem from './TodoItem.jsx';
 import TodoFilter from './TodoFilter.jsx';
 import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants/TodoFilters.jsx'
 
 var ENTER_KEY = 13;
 
-
-const TODO_FILTERS = {
-    [SHOW_ALL]: () => true,
-    [SHOW_ACTIVE]: todo => !todo.completed,
-    [SHOW_COMPLETED]: todo => todo.completed
-};
-
-
-
 class MainSection extends React.Component {
     constructor(props){
         super(props);
         this.state={
-            filter: SHOW_ALL,
             editing: null
         };
     }
+    addTodo(text){
+        dispatch(actions.todos.addTodo(text));
+    }
+    deleteTodo(todo){
+        dispatch(actions.todos.deleteTodo(todo.id));
+    }
     edit(todo,text){
-        const { store } = this.props;
-        store.dispatch(this.props.actions.editTodo(todo.id,text));
+        dispatch(actions.todos.editTodo(todo.id,text));
     }
     handleClickAll(){
-        this.setState({filter:SHOW_ALL})
+        dispatch(actions.todos.setVisibilityFilter(SHOW_ALL));
     }
     handleClickActive(){
-        this.setState({filter:SHOW_ACTIVE})
+        dispatch(actions.todos.setVisibilityFilter(SHOW_ACTIVE));
     }
     handleClickCompleted(){
-        this.setState({filter:SHOW_COMPLETED})
+        dispatch(actions.todos.setVisibilityFilter(SHOW_COMPLETED));
     }
-    handleNewTodoKeyDown(event){
-        if(event.keyCode !== ENTER_KEY)
-            return;
-        event.preventDefault();
-
-        var val=this.state.newTodo.trim();
-        if(val){
-            this.addTodo(val);
-            //this.setState({newTodo:''});
-        }
-    }
-    renderToggleAll(completedCount) {
-        const { todos, actions } = this.props;
-        if (todos.length > 0) {
-            return (
-                <input className="toggle-all"
-                       type="checkbox"
-                       checked={completedCount === todos.length}
-                       onChange={actions.completeAll} />
-            )
-        }
-    }
-
 
     handleNewTodoKeyDown(event){
         if(event.keyCode !== ENTER_KEY)
@@ -68,55 +41,25 @@ class MainSection extends React.Component {
 
         var val=event.target.value.trim();
         if(val){
-            actions.todos.addTodo(val);
+            this.addTodo(val);
             event.target.value='';
         }
     }
-
     handleClearCompleted() {
-        this.props.actions.clearCompleted()
+        dispatch(actions.todos.clearCompleted());
     }
-
     handleShow(filter) {
         this.setState({filter: filter })
     }
-
-    renderToggleAll(completedCount) {
-        const { todos, actions } = this.props;
-        if (todos.length > 0) {
-            return (
-                <input className="toggle-all"
-                       type="checkbox"
-                       checked={completedCount === todos.length}
-                       onChange={actions.completeAll} />
-            )
-        }
-    }
-
-    setItemsLeft(completedCount){
-        const { todos } = this.props;
-        const { filter } = this.state;
-        const activeCount=todos.length-completedCount;
-        let count;
-
-        if(filter===SHOW_ALL){
-            count=todos.length;
-        }
-        else
-        if(filter===SHOW_ACTIVE){
-            count=activeCount;
-        }
-        else{
-            count=completedCount;
-        }
-        return count;
+    onCancelEditing(){
+        this.setState({editing:null})
     }
     renderFooter(completedCount) {
-        const { todos } = this.props;
+        const { allTodos } = this.props;
         const { filter } = this.state;
         let count;
         const currentCount=this.setItemsLeft(completedCount);
-        if (todos.length) {
+        if (allTodos.length) {
             return (
                 <TodoFilter
                     key={filter}
@@ -133,33 +76,57 @@ class MainSection extends React.Component {
             )
         }
     }
+    renderToggleAll(completedCount) {
+        const { allTodos } = this.props;
+        if (allTodos.length > 0) {
+            return (
+                <input className="toggle-all"
+                       type="checkbox"
+                       checked={completedCount === allTodos.length}
+                       onChange={this.toggleAll.bind(this)} />
+            )
+        }
+    }
+    setItemsLeft(completedCount){
+        const { allTodos } = this.props;
+        const { filter } = this.state;
+        const activeCount=allTodos.length-completedCount;
+        let count;
+
+        if(filter===SHOW_ALL){
+            count=allTodos.length;
+        }
+        else
+        if(filter===SHOW_ACTIVE){
+            count=activeCount;
+        }
+        else{
+            count=completedCount;
+        }
+        return count;
+    }
     setEditing(todo){
         this.setState({editing:todo.id});
     }
-    deleteTodo(todo){
-        this.props.actions.deleteTodo(todo.id)
-    }
-    onCancelEditing(){
-        this.setState({editing:null})
-    }
+
     toggle(todoToToggle){
-        this.props.actions.completeTodo(todoToToggle.id);
+        dispatch(actions.todos.completeTodo(todoToToggle.id));
+    }
+    toggleAll(){
+        dispatch(actions.todos.completeAll());
     }
     render() {
         var footer;
         var main;
 
-        const { store, todos, actions } = this.props;
-        const { filter } = this.state;
-        const filteredTodos = todos.filter(TODO_FILTERS[filter]);
-        // this.props.store.dispatch(editTodo(0,blabla));
-        console.log(todos);
+        const { allTodos , filter } = this.props;
+        console.log(filter.currentFilter);
+        const filteredTodos = allTodos.filter(filter.filterFunction);
 
-        const completedCount = todos.reduce((count, todo) =>
+        const completedCount = allTodos.reduce((count, todo) =>
                 todo.completed ? count + 1 : count,
             0
         );
-        //console.log(todos);
 
         return (
             <div>
@@ -195,13 +162,13 @@ class MainSection extends React.Component {
     }
 }
 MainSection.propTypes={
-    todos:PropTypes.array.isRequired,
-    actions:PropTypes.object.isRequired
+//    todos:PropTypes.array.isRequired,
+//    actions:PropTypes.object.isRequired
 };
 
 function mapState(state, params) {
     return {
-        todos: state.todos.todos,
+        allTodos: state.todos.allTodos,
         filter: state.todos.filter
     }
 }

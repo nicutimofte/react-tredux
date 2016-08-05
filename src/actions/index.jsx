@@ -1,4 +1,4 @@
-
+const tredux = require('tredux');
 export const TYPE = {
     ADD_TODO: 'ADD_TODO',
     DELETE_TODO : 'DELETE_TODO',
@@ -33,6 +33,9 @@ export function completeAll() {
 export function clearCompleted() {
     return { type: TYPE.CLEAR_COMPLETED }
 }
-export function setVisibilityFilter(filter){
-    return { type: TYPE.SET_VISIBILITY_FILTER, filter}
+export function setVisibilityFilter(currentFilter){
+    return { type: TYPE.SET_VISIBILITY_FILTER, currentFilter}
 }
+
+
+tredux.addActions('todos', module.exports);
