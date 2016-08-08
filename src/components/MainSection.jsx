@@ -1,19 +1,19 @@
 'use strict';
 import React, {Component,PropTypes} from 'react';
-const {connect, actions, getState, dispatch} = require('tredux');
+const {connect, actions , dispatch} = require('tredux');
 
 import TodoItem from './TodoItem.jsx';
 import TodoFilter from './TodoFilter.jsx';
-import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants/TodoFilters.jsx'
+
+const SHOW_ALL = 'show_all',
+    SHOW_COMPLETED = 'show_completed',
+    SHOW_ACTIVE = 'show_active';
 
 var ENTER_KEY = 13;
 
 class MainSection extends React.Component {
     constructor(props){
         super(props);
-        this.state={
-            editing: null
-        };
     }
     addTodo(text){
         dispatch(actions.todos.addTodo(text));
@@ -21,19 +21,19 @@ class MainSection extends React.Component {
     deleteTodo(todo){
         dispatch(actions.todos.deleteTodo(todo.id));
     }
-    edit(todo,text){
-        dispatch(actions.todos.editTodo(todo.id,text));
-    }
+   
     handleClickAll(){
-        dispatch(actions.todos.setVisibilityFilter(SHOW_ALL));
+        //dispatch(actions.todos.setVisibilityFilter()) &&
+        dispatch(actions.todos.setVisibilityFilter(SHOW_ALL))
     }
     handleClickActive(){
-        dispatch(actions.todos.setVisibilityFilter(SHOW_ACTIVE));
+      //  dispatch(actions.todos.setVisibilityFilter()) &&
+        dispatch(actions.todos.setVisibilityFilter(SHOW_ACTIVE))
     }
     handleClickCompleted(){
-        dispatch(actions.todos.setVisibilityFilter(SHOW_COMPLETED));
+       // dispatch(actions.todos.setVisibilityFilter()) &&
+        dispatch(actions.todos.setVisibilityFilter(SHOW_COMPLETED))
     }
-
     handleNewTodoKeyDown(event){
         if(event.keyCode !== ENTER_KEY)
             return;
@@ -48,30 +48,21 @@ class MainSection extends React.Component {
     handleClearCompleted() {
         dispatch(actions.todos.clearCompleted());
     }
-    handleShow(filter) {
-        this.setState({filter: filter })
-    }
-    onCancelEditing(){
-        this.setState({editing:null})
-    }
-    renderFooter(completedCount) {
-        const { allTodos } = this.props;
-        const { filter } = this.state;
-        let count;
+   
+    renderFooter(completedCount){
+        const { allTodos,currentFilter } = this.props;
         const currentCount=this.setItemsLeft(completedCount);
         if (allTodos.length) {
             return (
                 <TodoFilter
-                    key={filter}
+                    key={currentFilter}
                     completedCount={completedCount}
                     count={currentCount}
-                    filter={filter}
                     clearCompletedButton={this.handleClearCompleted.bind(this)}
-                    nowShowing={this.state.filter}
+                    nowShowing={currentFilter}
                     clickedAll={this.handleClickAll.bind(this)}
                     clickedActive={this.handleClickActive.bind(this)}
                     clickedCompleted={this.handleClickCompleted.bind(this)}
-
                 />
             )
         }
@@ -88,16 +79,16 @@ class MainSection extends React.Component {
         }
     }
     setItemsLeft(completedCount){
-        const { allTodos } = this.props;
-        const { filter } = this.state;
+        const { allTodos,currentFilter } = this.props;
+
         const activeCount=allTodos.length-completedCount;
         let count;
 
-        if(filter===SHOW_ALL){
+        if(currentFilter===SHOW_ALL){
             count=allTodos.length;
         }
         else
-        if(filter===SHOW_ACTIVE){
+        if(currentFilter===SHOW_ACTIVE){
             count=activeCount;
         }
         else{
@@ -105,10 +96,7 @@ class MainSection extends React.Component {
         }
         return count;
     }
-    setEditing(todo){
-        this.setState({editing:todo.id});
-    }
-
+   
     toggle(todoToToggle){
         dispatch(actions.todos.completeTodo(todoToToggle.id));
     }
@@ -116,18 +104,14 @@ class MainSection extends React.Component {
         dispatch(actions.todos.completeAll());
     }
     render() {
-        var footer;
-        var main;
+        const { allTodos , filterFunction} = this.props;
 
-        const { allTodos , filter } = this.props;
-        console.log(filter.currentFilter);
-        const filteredTodos = allTodos.filter(filter.filterFunction);
+        const filteredTodos = allTodos.filter(filterFunction);
 
         const completedCount = allTodos.reduce((count, todo) =>
                 todo.completed ? count + 1 : count,
             0
         );
-
         return (
             <div>
                 <header className="header">
@@ -136,7 +120,6 @@ class MainSection extends React.Component {
                         type="text"
                         placeholder="What needs to be done?"
                         onKeyDown={this.handleNewTodoKeyDown.bind(this)}
-
                     />
                 </header>
                 <section className="main">
@@ -146,12 +129,8 @@ class MainSection extends React.Component {
                             <TodoItem 
                                 key={todo.id} 
                                 todo={todo}
-                                editing={this.state.editing === todo.id}
                                 onDelete={this.deleteTodo.bind(this,todo)}
                                 onToggle={this.toggle.bind(this,todo)}
-                                onSaveEdit={this.edit.bind(this,todo)}
-                                onEdit={this.setEditing.bind(this,todo)}
-                                onCancel={this.onCancelEditing.bind(this)}
                             />
                         )}
                     </ul>
@@ -161,15 +140,13 @@ class MainSection extends React.Component {
         );
     }
 }
-MainSection.propTypes={
-//    todos:PropTypes.array.isRequired,
-//    actions:PropTypes.object.isRequired
-};
 
 function mapState(state, params) {
     return {
         allTodos: state.todos.allTodos,
-        filter: state.todos.filter
+        filter: state.todos.filter,
+        currentFilter: state.todos.filter.currentFilter,
+        filterFunction:state.todos.filter.filterFunction
     }
 }
 export default connect(mapState, MainSection);

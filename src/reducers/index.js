@@ -1,3 +1,4 @@
 module.exports = [
-  require('./todos')
+  require('./todos.jsx'),
+  require('./ui.jsx')
 ];

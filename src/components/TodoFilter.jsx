@@ -1,7 +1,9 @@
 'use strict';
 import React from 'react';
 import classNames from 'classnames/bind';
-import { SHOW_ALL, SHOW_COMPLETED, SHOW_ACTIVE } from '../constants/TodoFilters.jsx'
+const SHOW_ALL = 'show_all',
+    SHOW_COMPLETED = 'show_completed',
+    SHOW_ACTIVE = 'show_active';
 
 class TodoFilter extends React.Component{
     handleActive(){
@@ -16,7 +18,6 @@ class TodoFilter extends React.Component{
     handleCompleted() {
         this.props.clickedCompleted && this.props.clickedCompleted();
     }
-
     render(){
         let nowShowing=this.props.nowShowing;
         var clearButton=null;

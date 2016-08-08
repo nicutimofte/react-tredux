@@ -1,4 +1,8 @@
 const tredux = require('tredux');
+const SHOW_ALL = 'show_all',
+    SHOW_COMPLETED = 'show_completed',
+    SHOW_ACTIVE = 'show_active';
+
 export const TYPE = {
     ADD_TODO: 'ADD_TODO',
     DELETE_TODO : 'DELETE_TODO',
@@ -18,7 +22,6 @@ export function deleteTodo(id) {
 }
 
 export function editTodo(id, text) {
-
     return { type: TYPE.EDIT_TODO, id, text }
 }
 

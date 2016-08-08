@@ -8,11 +8,18 @@ var ENTER_KEY = 13;
 class TodoItem extends React.Component {
     constructor(props){
         super(props);
+        this.state={
+            editText:this.props.todo.text
+        }
     }
-    edit(text){
-        const{todo}=this.props;
-        console.log("text: "+text);
+    edit(todo,text){
         dispatch(actions.todos.editTodo(todo.id,text));
+    }
+    handleChange(event){
+        const{editingTodo,todo}=this.props;
+        if(editingTodo === todo.id){
+            this.setState({editText:event.target.value});
+        }
     }
     handleDestroy(){
         this.props.onDelete && this.props.onDelete()
@@ -20,20 +27,22 @@ class TodoItem extends React.Component {
     handleEdit(){
         const{todo}=this.props;
         dispatch(actions.ui.setEditing(todo.id));
+        this.setState({editText:this.props.todo.text})
     }
     handleKeyDown(event){
-        if(event.which===ESCAPE_KEY || event.which===ENTER_KEY){
-            dispatch(actions.ui.unsetEditing());
-            dispatch(actions.ui.unsetEditText());
-        }
-        if(event.which === ENTER_KEY){
+        if(event.which===ESCAPE_KEY){
+            this.setState({editText:todo.text});
+        }else if(event.which === ENTER_KEY){
             this.handleSubmit(event);
         }
+        dispatch(actions.ui.unsetEditing());
     }
     handleSubmit(event){
+        const{todo}=this.props;
         let value=event.target.value.trim();
         if(value){
-            this.edit(value);
+            this.edit.bind(this,todo,value);
+            this.setState({editText:value});
         }
         else{
             this.props.onDelete();
@@ -47,15 +56,18 @@ class TodoItem extends React.Component {
         dispatch(actions.ui.unsetEditing());
     }
     render(){
-        const {editingTodo,todo,editText}=this.props;
+        const {editingTodo,todo}=this.props;
         let element;
 
         if(editingTodo===todo.id){
+            console.log(editingTodo+" "+todo.id);
             element=(
                 <input
                     ref="editField"
                     className="edit"
-                    defaultValue={todo.text}
+                    value={this.state.editText}
+                    // onBlur={this.handleSubmit.bind(this)}
+                    onChange={this.handleChange.bind(this)}
                     onKeyDown={this.handleKeyDown.bind(this)}
                 />
             );
@@ -79,7 +91,7 @@ class TodoItem extends React.Component {
         return(
             <li className={classNames({
                 completed:this.props.todo.completed,
-                editing:editingTodo
+                editing:this.editingTodo
             })}
             >
                 {element}
@@ -89,8 +101,7 @@ class TodoItem extends React.Component {
 }
 function mapState(state, params) {
     return {
-        editingTodo:state.ui.editingTodo,
-        editText:state.ui.editText
+        editingTodo:state.ui.editingTodo
     }
 }
 export default connect(mapState, TodoItem);
