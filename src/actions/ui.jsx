@@ -11,10 +11,5 @@ export function setEditing(id){
 export function unsetEditing(){
     return{ type:TYPE.UNSET_EDITING }
 }
-export function setEditText(text,id){
-    return{ type: TYPE.SET_EDITING,text,id};
-}
-export function unsetEditText(){
-    return{ type:TYPE.UNSET_EDITING }
-}
+
 tredux.addActions('ui',module.exports);

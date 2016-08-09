@@ -27,7 +27,6 @@ const reducer=tredux.reducer('todos',{
     },
     allTodos: mockData
 });
-
 reducer.handle(TYPE.ADD_TODO,(state,data)=>{
      state.allTodos=state.allTodos.concat({
            text: data.text,
@@ -54,8 +53,8 @@ reducer.handle(TYPE.COMPLETE_TODO,(state,data)=>{
     state.allTodos.map(todo=>{
         return todo.id === data.id ?
             Object.assign(todo, {completed: !todo.completed}) :
-            todo;
-    },this);
+            todo
+    });
     return state;
 });
 reducer.handle(TYPE.COMPLETE_ALL,(state)=>{

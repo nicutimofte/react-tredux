@@ -15121,8 +15121,6 @@ var account =
 	});
 	exports.setEditing = setEditing;
 	exports.unsetEditing = unsetEditing;
-	exports.setEditText = setEditText;
-	exports.unsetEditText = unsetEditText;
 	var tredux = __webpack_require__(59);
 	var TYPE = exports.TYPE = {
 	    SET_EDITING: 'SET_EDITING',
@@ -15136,12 +15134,7 @@ var account =
 	function unsetEditing() {
 	    return { type: TYPE.UNSET_EDITING };
 	}
-	function setEditText(text, id) {
-	    return { type: TYPE.SET_EDITING, text: text, id: id };
-	}
-	function unsetEditText() {
-	    return { type: TYPE.UNSET_EDITING };
-	}
+
 	tredux.addActions('ui', module.exports);
 
 /***/ },
@@ -15204,26 +15197,18 @@ var account =
 	            dispatch(actions.todos.addTodo(text));
 	        }
 	    }, {
-	        key: 'deleteTodo',
-	        value: function deleteTodo(todo) {
-	            dispatch(actions.todos.deleteTodo(todo.id));
-	        }
-	    }, {
 	        key: 'handleClickAll',
 	        value: function handleClickAll() {
-	            //dispatch(actions.todos.setVisibilityFilter()) &&
 	            dispatch(actions.todos.setVisibilityFilter(SHOW_ALL));
 	        }
 	    }, {
 	        key: 'handleClickActive',
 	        value: function handleClickActive() {
-	            //  dispatch(actions.todos.setVisibilityFilter()) &&
 	            dispatch(actions.todos.setVisibilityFilter(SHOW_ACTIVE));
 	        }
 	    }, {
 	        key: 'handleClickCompleted',
 	        value: function handleClickCompleted() {
-	            // dispatch(actions.todos.setVisibilityFilter()) &&
 	            dispatch(actions.todos.setVisibilityFilter(SHOW_COMPLETED));
 	        }
 	    }, {
@@ -15297,11 +15282,6 @@ var account =
 	            return count;
 	        }
 	    }, {
-	        key: 'toggle',
-	        value: function toggle(todoToToggle) {
-	            dispatch(actions.todos.completeTodo(todoToToggle.id));
-	        }
-	    }, {
 	        key: 'toggleAll',
 	        value: function toggleAll() {
 	            dispatch(actions.todos.completeAll());
@@ -15309,8 +15289,6 @@ var account =
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
-
 	            var _props3 = this.props;
 	            var allTodos = _props3.allTodos;
 	            var filterFunction = _props3.filterFunction;
@@ -15344,9 +15322,7 @@ var account =
 	                        filteredTodos.map(function (todo) {
 	                            return _react2.default.createElement(_TodoItem2.default, {
 	                                key: todo.id,
-	                                todo: todo,
-	                                onDelete: _this2.deleteTodo.bind(_this2, todo),
-	                                onToggle: _this2.toggle.bind(_this2, todo)
+	                                todo: todo
 	                            });
 	                        })
 	                    )
@@ -15552,13 +15528,14 @@ var account =
 	        value: function edit(text) {
 	            var todo = this.props.todo;
 
-	            console.log("text: " + text);
 	            dispatch(actions.todos.editTodo(todo.id, text));
 	        }
 	    }, {
-	        key: 'handleDestroy',
-	        value: function handleDestroy() {
-	            this.props.onDelete && this.props.onDelete();
+	        key: 'deleteTodo',
+	        value: function deleteTodo() {
+	            var todo = this.props.todo;
+
+	            dispatch(actions.todos.deleteTodo(todo.id));
 	        }
 	    }, {
 	        key: 'handleEdit',
@@ -15572,7 +15549,6 @@ var account =
 	        value: function handleKeyDown(event) {
 	            if (event.which === ESCAPE_KEY || event.which === ENTER_KEY) {
 	                dispatch(actions.ui.unsetEditing());
-	                dispatch(actions.ui.unsetEditText());
 	            }
 	            if (event.which === ENTER_KEY) {
 	                this.handleSubmit(event);
@@ -15585,20 +15561,15 @@ var account =
 	            if (value) {
 	                this.edit(value);
 	            } else {
-	                this.props.onDelete();
+	                this.deleteTodo();
 	            }
 	        }
 	    }, {
-	        key: 'set_editing',
-	        value: function set_editing() {
+	        key: 'toggle',
+	        value: function toggle() {
 	            var todo = this.props.todo;
 
-	            dispatch(actions.ui.setEditing(todo.id));
-	        }
-	    }, {
-	        key: 'unset_editing',
-	        value: function unset_editing() {
-	            dispatch(actions.ui.unsetEditing());
+	            dispatch(actions.todos.completeTodo(todo.id));
 	        }
 	    }, {
 	        key: 'render',
@@ -15609,7 +15580,6 @@ var account =
 	            var editText = _props.editText;
 
 	            var element = void 0;
-
 	            if (editingTodo === todo.id) {
 	                element = _react2.default.createElement('input', {
 	                    ref: 'editField',
@@ -15625,14 +15595,14 @@ var account =
 	                        className: 'toggle',
 	                        type: 'checkbox',
 	                        checked: todo.completed,
-	                        onChange: this.props.onToggle
+	                        onChange: this.toggle.bind(this)
 	                    }),
 	                    _react2.default.createElement(
 	                        'label',
 	                        { onDoubleClick: this.handleEdit.bind(this) },
 	                        todo.text
 	                    ),
-	                    _react2.default.createElement('button', { className: 'destroy', onClick: this.handleDestroy.bind(this) })
+	                    _react2.default.createElement('button', { className: 'destroy', onClick: this.deleteTodo.bind(this) })
 	                );
 	            }
 	            return _react2.default.createElement(
@@ -15805,7 +15775,6 @@ var account =
 	    },
 	    allTodos: mockData
 	});
-
 	reducer.handle(TYPE.ADD_TODO, function (state, data) {
 	    state.allTodos = state.allTodos.concat({
 	        text: data.text,
@@ -15831,7 +15800,7 @@ var account =
 	reducer.handle(TYPE.COMPLETE_TODO, function (state, data) {
 	    state.allTodos.map(function (todo) {
 	        return todo.id === data.id ? Object.assign(todo, { completed: !todo.completed }) : todo;
-	    }, undefined);
+	    });
 	    return state;
 	});
 	reducer.handle(TYPE.COMPLETE_ALL, function (state) {
@@ -15881,16 +15850,6 @@ var account =
 	    return state;
 	});
 	reducer.handle(TYPE.UNSET_EDITING, function (state) {
-	    state.editingTodo = null;
-	    return state;
-	});
-	reducer.handle(TYPE.SET_EDIT_TEXT, function (state, data) {
-	    if (data.id > 0) {
-	        state.editText = data.text;
-	    }
-	    return state;
-	});
-	reducer.handle(TYPE.UNSET_EDIT_TEXT, function (state) {
 	    state.editingTodo = null;
 	    return state;
 	});

@@ -18,20 +18,15 @@ class MainSection extends React.Component {
     addTodo(text){
         dispatch(actions.todos.addTodo(text));
     }
-    deleteTodo(todo){
-        dispatch(actions.todos.deleteTodo(todo.id));
-    }
+
    
     handleClickAll(){
-        //dispatch(actions.todos.setVisibilityFilter()) &&
         dispatch(actions.todos.setVisibilityFilter(SHOW_ALL))
     }
     handleClickActive(){
-      //  dispatch(actions.todos.setVisibilityFilter()) &&
         dispatch(actions.todos.setVisibilityFilter(SHOW_ACTIVE))
     }
     handleClickCompleted(){
-       // dispatch(actions.todos.setVisibilityFilter()) &&
         dispatch(actions.todos.setVisibilityFilter(SHOW_COMPLETED))
     }
     handleNewTodoKeyDown(event){
@@ -97,9 +92,7 @@ class MainSection extends React.Component {
         return count;
     }
    
-    toggle(todoToToggle){
-        dispatch(actions.todos.completeTodo(todoToToggle.id));
-    }
+    
     toggleAll(){
         dispatch(actions.todos.completeAll());
     }
@@ -129,8 +122,6 @@ class MainSection extends React.Component {
                             <TodoItem 
                                 key={todo.id} 
                                 todo={todo}
-                                onDelete={this.deleteTodo.bind(this,todo)}
-                                onToggle={this.toggle.bind(this,todo)}
                             />
                         )}
                     </ul>

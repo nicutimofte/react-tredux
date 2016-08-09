@@ -16,13 +16,3 @@ reducer.handle(TYPE.UNSET_EDITING,(state)=>{
     state.editingTodo=null;
     return state;
 });
-reducer.handle(TYPE.SET_EDIT_TEXT,(state,data)=>{
-    if(data.id>0){
-        state.editText=data.text;
-    }
-    return state;
-});
-reducer.handle(TYPE.UNSET_EDIT_TEXT,(state)=>{
-    state.editingTodo=null;
-    return state;
-});

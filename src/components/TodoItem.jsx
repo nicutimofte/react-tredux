@@ -11,12 +11,13 @@ class TodoItem extends React.Component {
     }
     edit(text){
         const{todo}=this.props;
-        console.log("text: "+text);
         dispatch(actions.todos.editTodo(todo.id,text));
     }
-    handleDestroy(){
-        this.props.onDelete && this.props.onDelete()
+    deleteTodo(){
+        const{todo}=this.props;
+        dispatch(actions.todos.deleteTodo(todo.id));
     }
+
     handleEdit(){
         const{todo}=this.props;
         dispatch(actions.ui.setEditing(todo.id));
@@ -24,7 +25,6 @@ class TodoItem extends React.Component {
     handleKeyDown(event){
         if(event.which===ESCAPE_KEY || event.which===ENTER_KEY){
             dispatch(actions.ui.unsetEditing());
-            dispatch(actions.ui.unsetEditText());
         }
         if(event.which === ENTER_KEY){
             this.handleSubmit(event);
@@ -36,20 +36,16 @@ class TodoItem extends React.Component {
             this.edit(value);
         }
         else{
-            this.props.onDelete();
+            this.deleteTodo();
         }
     }
-    set_editing(){
+    toggle(){
         const{todo}=this.props;
-        dispatch(actions.ui.setEditing(todo.id));
-    }
-    unset_editing(){
-        dispatch(actions.ui.unsetEditing());
+        dispatch(actions.todos.completeTodo(todo.id));
     }
     render(){
         const {editingTodo,todo,editText}=this.props;
         let element;
-
         if(editingTodo===todo.id){
             element=(
                 <input
@@ -66,12 +62,12 @@ class TodoItem extends React.Component {
                         className="toggle"
                         type="checkbox"
                         checked={todo.completed}
-                        onChange={this.props.onToggle}
+                        onChange={this.toggle.bind(this)}
                     />
                     <label onDoubleClick={this.handleEdit.bind(this)} >
                         {todo.text}
                     </label>
-                    <button className="destroy" onClick={this.handleDestroy.bind(this)} />
+                    <button className="destroy" onClick={this.deleteTodo.bind(this)} />
 
                 </div>
             );
