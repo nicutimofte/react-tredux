@@ -15776,48 +15776,54 @@ var account =
 	    allTodos: mockData
 	});
 	reducer.handle(TYPE.ADD_TODO, function (state, data) {
-	    state.allTodos = state.allTodos.concat({
-	        text: data.text,
-	        completed: false,
-	        id: state.allTodos.reduce(function (maxId, todo) {
-	            return Math.max(todo.id, maxId);
-	        }, -1) + 1
-	    });
-	    return state;
+	    return {
+	        allTodos: state.allTodos.concat({
+	            text: data.text,
+	            completed: false,
+	            id: state.allTodos.reduce(function (maxId, todo) {
+	                return Math.max(todo.id, maxId);
+	            }, -1) + 1
+	        })
+	    };
 	});
 	reducer.handle(TYPE.DELETE_TODO, function (state, data) {
-	    state.allTodos = state.allTodos.filter(function (todo) {
-	        return todo.id !== data.id;
-	    });
-	    return state;
+	    return {
+	        allTodos: state.allTodos.filter(function (todo) {
+	            return todo.id !== data.id;
+	        })
+	    };
 	});
 	reducer.handle(TYPE.EDIT_TODO, function (state, data) {
-	    state.allTodos.map(function (todo) {
-	        return todo.id === data.id ? Object.assign(todo, { text: data.text }) : todo;
-	    });
-	    return state;
+	    return {
+	        allTodos: state.allTodos.map(function (todo) {
+	            return todo.id === data.id ? Object.assign({}, todo, { text: data.text }) : todo;
+	        })
+	    };
 	});
 	reducer.handle(TYPE.COMPLETE_TODO, function (state, data) {
-	    state.allTodos.map(function (todo) {
-	        return todo.id === data.id ? Object.assign(todo, { completed: !todo.completed }) : todo;
-	    });
-	    return state;
+	    return {
+	        allTodos: state.allTodos.map(function (todo) {
+	            return todo.id === data.id ? Object.assign({}, todo, { completed: !todo.completed }) : todo;
+	        })
+	    };
 	});
 	reducer.handle(TYPE.COMPLETE_ALL, function (state) {
 	    var areAllMarked = state.allTodos.every(function (todo) {
 	        return todo.completed;
 	    });
 
-	    state.allTodos.map(function (todo) {
-	        return Object.assign(todo, { completed: !areAllMarked });
-	    }, undefined);
-	    return state;
+	    return {
+	        allTodos: state.allTodos.map(function (todo) {
+	            return Object.assign({}, todo, { completed: !areAllMarked });
+	        })
+	    };
 	});
 	reducer.handle(TYPE.CLEAR_COMPLETED, function (state) {
-	    state.allTodos = state.allTodos.filter(function (todo) {
-	        return todo.completed === false;
-	    });
-	    return state;
+	    return {
+	        allTodos: state.allTodos.filter(function (todo) {
+	            return todo.completed === false;
+	        })
+	    };
 	});
 	reducer.handle(TYPE.SET_VISIBILITY_FILTER, function (state, data) {
 	    if (data.currentFilter) {

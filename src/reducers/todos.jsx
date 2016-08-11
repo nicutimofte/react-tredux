@@ -28,48 +28,54 @@ const reducer=tredux.reducer('todos',{
     allTodos: mockData
 });
 reducer.handle(TYPE.ADD_TODO,(state,data)=>{
-     state.allTodos=state.allTodos.concat({
-           text: data.text,
-           completed:false,
-           id: state.allTodos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1) + 1
-       });
-    return state;
+    return {
+        allTodos: state.allTodos.concat({
+            text: data.text,
+            completed:false,
+            id: state.allTodos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1) + 1
+        })
+    };
 });
 reducer.handle(TYPE.DELETE_TODO,(state,data)=>{
-   state.allTodos = state.allTodos.filter(todo=>
-        todo.id !== data.id
-    );
-    return state;
+   return{
+       allTodos:state.allTodos.filter(todo=>
+           todo.id !== data.id
+       )
+   }
 });
 reducer.handle(TYPE.EDIT_TODO,(state,data)=>{
-    state.allTodos.map(todo=>{
-        return todo.id === data.id ?
-            Object.assign(todo, {text: data.text}) :
-            todo
-    });
-    return state;
+    return {
+        allTodos: state.allTodos.map(todo=> {
+            return todo.id === data.id ?
+                Object.assign({}, todo, {text: data.text}) :
+                todo
+        })
+    }
 });
 reducer.handle(TYPE.COMPLETE_TODO,(state,data)=>{
-    state.allTodos.map(todo=>{
+    return{
+        allTodos:state.allTodos.map(todo=>{
         return todo.id === data.id ?
-            Object.assign(todo, {completed: !todo.completed}) :
+            Object.assign({}, todo, {completed: !todo.completed}) :
             todo
-    });
-    return state;
+         })
+    }
 });
 reducer.handle(TYPE.COMPLETE_ALL,(state)=>{
     const areAllMarked = state.allTodos.every(todo=>todo.completed);
 
-    state.allTodos.map((todo)=>{
-        return Object.assign(todo, {completed: !areAllMarked});
-    },this);
-    return state;
+    return {
+        allTodos: state.allTodos.map((todo)=> {
+            return Object.assign({},todo, {completed: !areAllMarked});
+        })
+    }
 });
 reducer.handle(TYPE.CLEAR_COMPLETED,(state)=>{
-    state.allTodos= state.allTodos.filter((todo)=>
-        todo.completed === false
-        );
-    return state;
+    return{
+        allTodos: state.allTodos.filter((todo)=>
+            todo.completed === false
+        )
+    }
 });
 reducer.handle(TYPE.SET_VISIBILITY_FILTER,(state,data)=>{
    if(data.currentFilter){
