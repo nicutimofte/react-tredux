@@ -4,7 +4,9 @@
   "description": "Simple and lightweight Boilerplate for ReactJS projects",
   "scripts": {
     "lint": "eslint src",
-    "start": "webpack --config=webpack.config.js --watch"
+    "start": "webpack --config=webpack.config.js --watch",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -51,6 +53,8 @@
     "thorin-plugin-render": "^1.0.17",
     "thorin-transport-http": "^1.0.39",
     "thorin": "1.x",
-    "tredux": "^1.x"
-  }
+    "tredux": "^1.x",
+    "snyk": "^1.42.6"
+  },
+  "snyk": true
 }
