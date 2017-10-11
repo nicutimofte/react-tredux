@@ -1,0 +1,38 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.7.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:debug:20170905':
+    - thorin-transport-http > body-parser > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > helmet > connect > finalhandler > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > send > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > serve-static > send > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > helmet > connect > debug:
+        patched: '2017-10-11T21:10:34.468Z'
+  'npm:ms:20170412':
+    - thorin-transport-http > body-parser > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > helmet > connect > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > helmet > connect > finalhandler > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > send > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > serve-static > send > debug > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > send > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+    - thorin-transport-http > express > serve-static > send > ms:
+        patched: '2017-10-11T21:10:34.468Z'
+  'npm:qs:20170213':
+    - thorin-transport-http > body-parser > qs:
+        patched: '2017-10-11T21:10:34.468Z'
