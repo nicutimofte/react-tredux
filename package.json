@@ -45,12 +45,12 @@
     "classnames": "^2.2.5",
     "fs-extra": "^0.30.0",
     "nunjucks": "^2.4.2",
-    "react": "15.2.1",
+    "react": "16.5.0",
     "react-dom": "15.2.1",
     "react-immutable-proptypes": "^2.0.0",
     "thorin-plugin-render": "^1.0.17",
     "thorin-transport-http": "^1.0.39",
-    "thorin": "1.x",
+    "thorin": "2.1.8",
     "tredux": "^1.x"
   }
 }
